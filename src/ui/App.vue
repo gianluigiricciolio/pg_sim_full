@@ -30,7 +30,7 @@
       <section class="panel">
         <h2>Stato & Log</h2>
         <div class="kv"><b>Data</b><span>{{ dateLabel }}</span></div>
-        <div class="kv"><b>Attività corrente</b><span>{{ state.activity.name }}</span></div>
+        <div class="kv"><b>Attività corrente</b><span>{{ state.pg.state.activity.name }}</span></div>
         <div class="kv"><b>Lavoro</b><span>{{ cfg.work.on ? 'ON' : 'OFF' }}</span></div>
         <h3>Log eventi</h3>
         <div class="list small" ref="logEl">
@@ -51,9 +51,9 @@
           <tbody>
             <tr v-for="n in needKeys" :key="n">
               <td>{{ labelsNeed[n] }}</td>
-              <td>{{ Math.round(state.needs[n]) }}</td>
+              <td>{{ Math.round(state.pg.state.needs[n]) }}</td>
               <td>
-                <div class="bar"><i :style="{ width: Math.max(0, Math.min(100, state.needs[n])) + '%' }"></i></div>
+                <div class="bar"><i :style="{ width: Math.max(0, Math.min(100, state.pg.state.needs[n])) + '%' }"></i></div>
               </td>
             </tr>
           </tbody>

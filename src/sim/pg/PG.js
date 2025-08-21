@@ -1,20 +1,25 @@
 import { reactive } from 'vue'
 
 export class PG {
-    constructor(name, cfg, startTime) {
+    constructor(name, cfg, logFn) {
         this.name = name
         this.cfg = cfg
+        this.log = logFn
         this.state = reactive({
             needs: { energy: 95, nutrition: 85, hygiene: 80, social: 75, fun: 80 },
             activity: { name: 'Idle', until: null },
-            meta: { lastMeal: null, lastSleep: null, lastWash: null },
+            meta: { lastMealTime: null, lastSleepTime: null, lastShowerTime: null },
         })
-        this.time = startTime
     }
 
-    tickMinute(currentTime) {
-        this.time = currentTime
-        // Per ora solo decadimento base
+    schedule(currentTime, name, minutes) {
+        const until = new Date(currentTime.getTime() + minutes * 60000)
+        this.state.activity = { name, until }
+        if (this.log) this.log(`Inizio ${name} (${minutes}m)`)
+        return until
+    }
+
+    decayMinute() {
         const d = this.cfg.decay
         this.state.needs.energy -= d.energy.base / 60
         this.state.needs.nutrition -= d.nutrition / 60
@@ -28,5 +33,42 @@ export class PG {
         for (const k of Object.keys(this.state.needs)) {
             this.state.needs[k] = Math.max(0, Math.min(100, this.state.needs[k]))
         }
+    }
+
+    applyActivityMinute(currentTime) {
+        const a = this.state.activity.name
+        switch (a) {
+            case 'Dormire':
+                this.state.needs.energy = Math.min(100, this.state.needs.energy + (12.5 / 60))
+                this.state.needs.nutrition -= (1.0 / 60)
+                break
+            case 'Power-nap':
+                this.state.needs.energy = Math.min(100, this.state.needs.energy + 0.5)
+                break
+            case 'Mangiare':
+                this.state.needs.nutrition = Math.min(100, this.state.needs.nutrition + (50 / 40))
+                break
+            case 'Lavarsi':
+                this.state.needs.hygiene = Math.min(100, this.state.needs.hygiene + (40 / 12))
+                break
+            case 'Socializzare':
+                this.state.needs.social = Math.min(100, this.state.needs.social + (35 / 90))
+                this.state.needs.fun = Math.min(100, this.state.needs.fun + (10 / 90))
+                this.state.needs.energy -= (1.0 / 60)
+                break
+            case 'Svago':
+                this.state.needs.fun = Math.min(100, this.state.needs.fun + (25 / 60))
+                break
+            case 'Lavorare':
+                this.state.needs.energy -= (4.0 / 60)
+                this.state.needs.nutrition -= (2.0 / 60)
+                break
+            case 'Idle':
+                this.state.needs.energy = Math.min(100, this.state.needs.energy + 0.2)
+                break
+        }
+        if (a !== 'Dormire') this.decayMinute()
+        else this.clampNeeds()
+        return new Date(currentTime.getTime() + 60000)
     }
 }
