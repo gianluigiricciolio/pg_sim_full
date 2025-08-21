@@ -14,6 +14,10 @@ const activitiesByLabel = {}
  * Register activity variants using an optional prefix to avoid key collisions.
  * Variants can then be retrieved either by their internal key (e.g. `work.block`)
  * or by their label (e.g. `Lavorare`).
+ * @param {object} activity - Activity definition containing variants.
+ * @param {string} [prefix=''] - Optional prefix added to each key.
+ * @returns {void}
+ * @sideeffect Populates internal lookup tables.
  */
 function registerVariants(activity, prefix = '') {
     if (!activity?.variants) return
@@ -36,7 +40,8 @@ registerVariants(IdleActivity)
 export const ActivityRegistry = {
     /**
      * Retrieve an activity by internal key or label.
-     * @param {string} key
+     * @param {string} key - Key or label identifying the activity.
+     * @returns {object|undefined} Matching activity variant if found.
      */
     get(key) {
         return activitiesByKey[key] || activitiesByLabel[key]

@@ -18,6 +18,7 @@ export const WorkActivity = {
      * @param {Array<{start: Date, name: string, duration: number}>} [inserts=[]]
      *        attività da inserire all'interno dell'orario
      * @returns {Array<{start: Date, name: string, duration: number}>} - lista ordinata di attività
+     * @sideeffect None. Restituisce un nuovo array senza modificare gli argomenti.
      */
     buildSchedule(start, end, blockMinutes = 30, inserts = []) {
         const result = []
