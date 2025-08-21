@@ -11,6 +11,24 @@
   </section>
 
   <section class="panel">
+    <h2>Attività giornaliere</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Attività</th>
+          <th>Conteggio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(count, name) in state.pg.state.dailyActivities" :key="name">
+          <td>{{ name }}</td>
+          <td>{{ count }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="panel">
     <h2>Bisogni</h2>
     <table>
       <thead>

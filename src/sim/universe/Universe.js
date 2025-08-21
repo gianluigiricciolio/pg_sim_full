@@ -151,6 +151,7 @@ export function createUniverse() {
             // At day start reset eaten-meal flags
             const meals = state.pg.state.meta.meals
             meals.breakfast = meals.lunch = meals.dinner = false
+            state.pg.state.dailyActivities = {}
         }
 
         const ctx = {

@@ -32,6 +32,7 @@ export class PG {
         this.state = reactive({
             needs: { energy: 95, nutrition: 85, hygiene: 80, social: 75, fun: 80 },
             activity: { name: 'Idle', until: null, start: null },
+            dailyActivities: {},
             meta: {
                 lastMealTime: null,
                 lastSleepTime: null,
@@ -54,6 +55,7 @@ export class PG {
 
         // Extend existing activity if it's the same and has already ended
         if (activity.name === name && activity.until && currentTime >= activity.until) {
+            this.state.dailyActivities[name] = (this.state.dailyActivities[name] || 0) + 1
             activity.until = new Date(activity.until.getTime() + minutes * 60000) // minutes → ms
             return activity.until
         }
@@ -61,6 +63,10 @@ export class PG {
         if (activity.start) {
             const dur = currentTime - activity.start
             if (this.log) this.log(`Finito ${activity.name} (durata ${formatDuration(dur)})`)
+            if (!activity.until || currentTime >= activity.until) {
+                const prev = activity.name
+                this.state.dailyActivities[prev] = (this.state.dailyActivities[prev] || 0) + 1
+            }
         }
 
         const start = new Date(currentTime)
