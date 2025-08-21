@@ -7,7 +7,7 @@ export class PG {
         this.log = logFn
         this.state = reactive({
             needs: { energy: 95, nutrition: 85, hygiene: 80, social: 75, fun: 80 },
-            activity: { name: 'Idle', until: null },
+            activity: { name: 'Idle', until: null, start: null },
             meta: {
                 lastMealTime: null,
                 lastSleepTime: null,
@@ -18,9 +18,10 @@ export class PG {
     }
 
     schedule(currentTime, name, minutes) {
+        const start = new Date(currentTime)
         const until = new Date(currentTime.getTime() + minutes * 60000)
-        this.state.activity = { name, until }
-        if (this.log) this.log(`Inizio ${name} (${minutes}m)`)
+        this.state.activity = { name, until, start }
+        if (this.log) this.log(`Iniziato ${name}`)
         return until
     }
 
