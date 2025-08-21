@@ -11,9 +11,7 @@ export function handleWork({ state, pg, cfg, doNap, doEat, doWash, doWork, isWee
     const h = state.time.getHours()
     const workOn = cfg.work.on && !isWeekend()
     if (workOn && h >= cfg.work.start && h < cfg.work.end) {
-        if (pg.state.needs.energy < 20) { doNap(30); return true }
-        if (pg.state.needs.nutrition < 15) { doEat(45); return true }
-        if (pg.state.needs.hygiene < 15) { doWash(12); return true }
+        if (pg.checkPrimaryNeeds({ doNap, doEat, doWash })) return true
         doWork(30)
         return true
     }
@@ -21,9 +19,7 @@ export function handleWork({ state, pg, cfg, doNap, doEat, doWash, doWork, isWee
 }
 
 export function handleEmergencies({ pg, doNap, doEat, doWash }) {
-    if (pg.state.needs.energy < 20) { doNap(30); return true }
-    if (pg.state.needs.nutrition < 15) { doEat(45); return true }
-    if (pg.state.needs.hygiene < 15) { doWash(12); return true }
+    if (pg.checkPrimaryNeeds({ doNap, doEat, doWash })) return true
     return false
 }
 

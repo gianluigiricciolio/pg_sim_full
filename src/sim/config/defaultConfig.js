@@ -12,6 +12,7 @@ export function defaultConfig() {
             social: 1.5,
             fun: 2.0
         },
-        thr: { energy: 35, nutrition: 30, hygiene: 25, social: 35, fun: 35 }
+        thr: { energy: 35, nutrition: 30, hygiene: 25, social: 35, fun: 35 },
+        crit: { energy: 20, nutrition: 15, hygiene: 15 }
     }
 }
