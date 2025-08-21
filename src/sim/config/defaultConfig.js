@@ -1,3 +1,8 @@
+/**
+ * Default configuration for the simulation.
+ * @returns {object} Configuration object with decay rates, thresholds and schedules.
+ * @sideeffect None.
+ */
 export function defaultConfig() {
     return {
         seed: 12345,
