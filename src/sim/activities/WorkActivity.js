@@ -3,8 +3,10 @@ export const WorkActivity = {
         block: {
             label: 'Lavorare',
             duration: 30,
-            energyPerMinute: -4.0 / 60,
-            nutritionPerMinute: -2.0 / 60,
+            effects: {
+                energy: -4.0 / 60,
+                nutrition: -2.0 / 60,
+            },
         },
     },
     /**
