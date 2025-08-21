@@ -1,4 +1,5 @@
 import { reactive } from 'vue'
+import { SleepActivity } from '../activities/SleepActivity.js'
 
 function formatDuration(ms) {
     const totalMinutes = Math.round(ms / 60000)
@@ -65,12 +66,17 @@ export class PG {
     applyActivityMinute(currentTime) {
         const a = this.state.activity.name
         switch (a) {
-            case 'Dormire':
-                this.state.needs.energy = Math.min(100, this.state.needs.energy + (12.5 / 60))
-                this.state.needs.nutrition -= (1.0 / 60)
+            case SleepActivity.variants.night.label:
+                this.state.needs.energy = Math.min(100, this.state.needs.energy + SleepActivity.variants.night.energyPerMinute)
+                this.state.needs.nutrition -= (-SleepActivity.variants.night.nutritionPerMinute)
                 break
-            case 'Power-nap':
-                this.state.needs.energy = Math.min(100, this.state.needs.energy + 0.5)
+            case SleepActivity.variants.short.label:
+                this.state.needs.energy = Math.min(100, this.state.needs.energy + SleepActivity.variants.short.energyPerMinute)
+                this.state.needs.nutrition -= (-SleepActivity.variants.short.nutritionPerMinute)
+                break
+            case SleepActivity.variants.power.label:
+                this.state.needs.energy = Math.min(100, this.state.needs.energy + SleepActivity.variants.power.energyPerMinute)
+                this.state.needs.nutrition -= (-SleepActivity.variants.power.nutritionPerMinute)
                 break
             case 'Mangiare':
                 this.state.needs.nutrition = Math.min(100, this.state.needs.nutrition + (50 / 40))
@@ -94,8 +100,8 @@ export class PG {
                 this.state.needs.energy = Math.min(100, this.state.needs.energy + 0.2)
                 break
         }
-        if (a !== 'Dormire') this.decayMinute()
-        else this.clampNeeds()
+        if (a === SleepActivity.variants.night.label) this.clampNeeds()
+        else this.decayMinute()
         return new Date(currentTime.getTime() + 60000)
     }
 
@@ -106,10 +112,10 @@ export class PG {
         }
     }
 
-    checkPrimaryNeeds({ doNap, doEat, doWash }) {
+    checkPrimaryNeeds({ doSleep, doEat, doWash }) {
         const needs = this.state.needs
         const crit = this.cfg.crit
-        if (needs.energy < crit.energy) { doNap(30); return true }
+        if (needs.energy < crit.energy) { doSleep('power', 30); return true }
         if (needs.nutrition < crit.nutrition) { doEat(45); return true }
         if (needs.hygiene < crit.hygiene) { doWash(12); return true }
         return false
