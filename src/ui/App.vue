@@ -121,13 +121,13 @@
 
 <script>
 import { ref, reactive, computed, onMounted, watch } from 'vue'
-import { createDaySim } from '../sim/day.js'
+import { createUniverse } from '../sim/universe/universe'
 import DayEv from './DayEv.vue'
 
 export default {
   components: { DayEv },
   setup() {
-    const { state, cfg, logs, play, pause, step, reinit, setSpeed } = createDaySim()
+    const { state, cfg, logs, play, pause, step, reinit, setSpeed } = createUniverse()
     const speed = ref(1)
     const tab = ref('day')
     const labelsNeed = { energy: 'Energia', nutrition: 'Nutrizione', hygiene: 'Igiene', social: 'Socialità', fun: 'Divertimento' }

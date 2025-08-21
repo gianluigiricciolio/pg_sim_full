@@ -1,7 +1,9 @@
-// src/sim/day.js
+// src/sim/universe/universe.js
 import { reactive } from 'vue'
+import { defaultConfig } from '../config/defaultConfig'
+import { PG } from '../pg/PG'
 
-export function createDaySim() {
+export function createUniverse() {
     const cfg = reactive(defaultConfig())
     const state = reactive({
         time: new Date(2025, 0, 1, cfg.time.startHour, 0, 0, 0),
