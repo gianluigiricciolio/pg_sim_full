@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { SleepActivity } from '../activities/SleepActivity.js'
+import { ActivityRegistry } from '../activities/ActivityRegistry.js'
 
 function formatDuration(ms) {
     const totalMinutes = Math.round(ms / 60000)
@@ -64,45 +64,24 @@ export class PG {
     }
 
     applyActivityMinute(currentTime) {
-        const a = this.state.activity.name
-        switch (a) {
-            case SleepActivity.variants.night.label:
-                this.state.needs.energy = Math.min(100, this.state.needs.energy + SleepActivity.variants.night.energyPerMinute)
-                this.state.needs.nutrition -= (-SleepActivity.variants.night.nutritionPerMinute)
-                break
-            case SleepActivity.variants.short.label:
-                this.state.needs.energy = Math.min(100, this.state.needs.energy + SleepActivity.variants.short.energyPerMinute)
-                this.state.needs.nutrition -= (-SleepActivity.variants.short.nutritionPerMinute)
-                break
-            case SleepActivity.variants.power.label:
-                this.state.needs.energy = Math.min(100, this.state.needs.energy + SleepActivity.variants.power.energyPerMinute)
-                this.state.needs.nutrition -= (-SleepActivity.variants.power.nutritionPerMinute)
-                break
-            case 'Mangiare':
-                this.state.needs.nutrition = Math.min(100, this.state.needs.nutrition + (50 / 40))
-                break
-            case 'Lavarsi':
-                this.state.needs.hygiene = Math.min(100, this.state.needs.hygiene + (40 / 12))
-                break
-            case 'Socializzare':
-                this.state.needs.social = Math.min(100, this.state.needs.social + (35 / 90))
-                this.state.needs.fun = Math.min(100, this.state.needs.fun + (10 / 90))
-                this.state.needs.energy -= (1.0 / 60)
-                break
-            case 'Svago':
-                this.state.needs.fun = Math.min(100, this.state.needs.fun + (25 / 60))
-                break
-            case 'Lavorare':
-                this.state.needs.energy -= (4.0 / 60)
-                this.state.needs.nutrition -= (2.0 / 60)
-                break
-            case 'Idle':
-                this.state.needs.energy = Math.min(100, this.state.needs.energy + 0.2)
-                break
+        const name = this.state.activity.name
+        const activity = ActivityRegistry.get(name)
+
+        if (activity?.effects) {
+            for (const [need, value] of Object.entries(activity.effects)) {
+                if (this.state.needs[need] !== undefined) {
+                    this.state.needs[need] += value
+                }
+            }
         }
-        if (a === SleepActivity.variants.night.label) this.clampNeeds()
-        else this.decayMinute()
+
+        this.applyDecayOrClamp(activity)
         return new Date(currentTime.getTime() + 60000)
+    }
+
+    applyDecayOrClamp(activity) {
+        if (activity?.skipDecay) this.clampNeeds()
+        else this.decayMinute()
     }
 
     recordMeal(time, type) {
