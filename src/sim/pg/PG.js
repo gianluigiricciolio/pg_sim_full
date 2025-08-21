@@ -1,5 +1,14 @@
 import { reactive } from 'vue'
 
+function formatDuration(ms) {
+    const totalMinutes = Math.round(ms / 60000)
+    const hours = Math.floor(totalMinutes / 60)
+    const minutes = totalMinutes % 60
+    if (hours > 0 && minutes > 0) return `${hours}h ${minutes}m`
+    if (hours > 0) return `${hours}h`
+    return `${minutes}m`
+}
+
 export class PG {
     constructor(name, cfg, logFn) {
         this.name = name
@@ -18,6 +27,18 @@ export class PG {
     }
 
     schedule(currentTime, name, minutes) {
+        const activity = this.state.activity
+
+        if (activity.name === name && activity.until && currentTime >= activity.until) {
+            activity.until = new Date(activity.until.getTime() + minutes * 60000)
+            return activity.until
+        }
+
+        if (activity.start) {
+            const dur = currentTime - activity.start
+            if (this.log) this.log(`Finito ${activity.name} (durata ${formatDuration(dur)})`)
+        }
+
         const start = new Date(currentTime)
         const until = new Date(currentTime.getTime() + minutes * 60000)
         this.state.activity = { name, until, start }
