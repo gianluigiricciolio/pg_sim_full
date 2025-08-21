@@ -7,19 +7,19 @@ export function handleSleep({ state, pg, doSleepNight }) {
     return false
 }
 
-export function handleWork({ state, pg, cfg, doNap, doEat, doWash, doWork, isWeekend }) {
+export function handleWork({ state, pg, cfg, doSleep, doEat, doWash, doWork, isWeekend }) {
     const h = state.time.getHours()
     const workOn = cfg.work.on && !isWeekend()
     if (workOn && h >= cfg.work.start && h < cfg.work.end) {
-        if (pg.checkPrimaryNeeds({ doNap, doEat, doWash })) return true
+        if (pg.checkPrimaryNeeds({ doSleep, doEat, doWash })) return true
         doWork(30)
         return true
     }
     return false
 }
 
-export function handleEmergencies({ pg, doNap, doEat, doWash }) {
-    if (pg.checkPrimaryNeeds({ doNap, doEat, doWash })) return true
+export function handleEmergencies({ pg, doSleep, doEat, doWash }) {
+    if (pg.checkPrimaryNeeds({ doSleep, doEat, doWash })) return true
     return false
 }
 
@@ -37,9 +37,9 @@ export function handleMeals({ state, pg, cfg, doEat, within }) {
     return false
 }
 
-export function handleNap({ state, pg, cfg, doNap }) {
+export function handleNap({ state, pg, cfg, doSleep }) {
     if (pg.state.needs.energy < cfg.thr.energy && state.napCount < cfg.limits.maxNapsPerDay) {
-        doNap(20)
+        doSleep('power', 20)
         return true
     }
     return false

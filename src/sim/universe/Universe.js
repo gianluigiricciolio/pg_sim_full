@@ -2,6 +2,7 @@
 import { reactive } from 'vue'
 import { defaultConfig } from '../config/defaultConfig'
 import { createPG } from '../pg/PG.js'
+import { SleepActivity } from '../activities/SleepActivity.js'
 import { handleSleep, handleWork, handleEmergencies, handleMeals, handleNap, handleSocial, handleFun, handleHygiene, handleIdle } from './rules'
 export function createUniverse() {
     const cfg = reactive(defaultConfig())
@@ -101,7 +102,7 @@ export function createUniverse() {
             within,
             isWeekend,
             doSleepNight,
-            doNap,
+            doSleep,
             doEat,
             doWash,
             doSocial,
@@ -138,9 +139,13 @@ export function createUniverse() {
             targetEnd.setHours(7, 0, 0, 0)
         }
         let minutes = Math.max(360, Math.min(540, (targetEnd - state.time) / 60000))
-        state.pg.schedule(state.time, 'Dormire', minutes)
+        state.pg.schedule(state.time, SleepActivity.variants.night.label, minutes)
     }
-    function doNap(minutes) { state.napCount++; state.pg.schedule(state.time, 'Power-nap', minutes) }
+    function doSleep(variant, minutes) {
+        if (variant === 'power') state.napCount++
+        const label = SleepActivity.variants[variant]?.label || SleepActivity.variants.night.label
+        state.pg.schedule(state.time, label, minutes)
+    }
     function doEat(minutes) { state.pg.schedule(state.time, 'Mangiare', minutes) }
     function doWash(minutes) { state.pg.schedule(state.time, 'Lavarsi', minutes) }
     function doSocial(minutes) { state.pg.schedule(state.time, 'Socializzare', minutes) }
