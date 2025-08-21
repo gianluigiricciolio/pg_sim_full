@@ -3,6 +3,7 @@ import { reactive } from 'vue'
 import { defaultConfig } from '../config/defaultConfig'
 import { createPG } from '../pg/PG.js'
 import { SleepActivity } from '../activities/SleepActivity.js'
+import { ActivityRegistry } from '../activities/ActivityRegistry.js'
 import { handleSleep, handleWork, handleEmergencies, handleMeals, handleNap, handleSocial, handleFun, handleHygiene, handleIdle } from './rules'
 export function createUniverse() {
     const cfg = reactive(defaultConfig())
@@ -146,12 +147,18 @@ export function createUniverse() {
         const label = SleepActivity.variants[variant]?.label || SleepActivity.variants.night.label
         state.pg.schedule(state.time, label, minutes)
     }
-    function doEat(minutes) { state.pg.schedule(state.time, 'Mangiare', minutes) }
-    function doWash(minutes) { state.pg.schedule(state.time, 'Lavarsi', minutes) }
-    function doSocial(minutes) { state.pg.schedule(state.time, 'Socializzare', minutes) }
-    function doFun(minutes) { state.pg.schedule(state.time, 'Svago', minutes) }
-    function doWork(minutes) { state.pg.schedule(state.time, 'Lavorare', minutes) }
-    function doIdle(minutes) { state.pg.schedule(state.time, 'Idle', minutes) }
+
+    function scheduleActivity(key, minutes) {
+        const activity = ActivityRegistry.get(key)
+        if (!activity) return
+        state.pg.schedule(state.time, activity.label, minutes)
+    }
+    function doEat(minutes) { scheduleActivity('eat', minutes) }
+    function doWash(minutes) { scheduleActivity('wash', minutes) }
+    function doSocial(minutes) { scheduleActivity('social', minutes) }
+    function doFun(minutes) { scheduleActivity('fun', minutes) }
+    function doWork(minutes) { scheduleActivity('work.block', minutes) }
+    function doIdle(minutes) { scheduleActivity('idle', minutes) }
 
     return { state, cfg, logs, play, pause, step, reinit, setSpeed }
 }
