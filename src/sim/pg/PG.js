@@ -105,7 +105,16 @@ export class PG {
             this.state.meta.meals[type] = !this.state.meta.meals[type]
         }
     }
-}
+
+    checkPrimaryNeeds({ doNap, doEat, doWash }) {
+        const needs = this.state.needs
+        const crit = this.cfg.crit
+        if (needs.energy < crit.energy) { doNap(30); return true }
+        if (needs.nutrition < crit.nutrition) { doEat(45); return true }
+        if (needs.hygiene < crit.hygiene) { doWash(12); return true }
+        return false
+    }
+  }
 
 export function createPG(cfg, log) {
     return new PG('PG', cfg, log)
