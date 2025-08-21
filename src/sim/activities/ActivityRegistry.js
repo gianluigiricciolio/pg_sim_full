@@ -1,5 +1,10 @@
 import { SleepActivity } from './SleepActivity.js'
 import { WorkActivity } from './WorkActivity.js'
+import { EatActivity } from './EatActivity.js'
+import { WashActivity } from './WashActivity.js'
+import { SocialActivity } from './SocialActivity.js'
+import { FunActivity } from './FunActivity.js'
+import { IdleActivity } from './IdleActivity.js'
 
 // Store activities by both internal key and user-visible label
 const activitiesByKey = {}
@@ -19,23 +24,14 @@ function registerVariants(activity, prefix = '') {
     }
 }
 
-// Register complex activities with a namespace prefix
+// Register activities
 registerVariants(SleepActivity, 'sleep')
 registerVariants(WorkActivity, 'work')
-
-// Basic activities are keyed explicitly
-const basicActivities = {
-    eat: { label: 'Mangiare', effects: { nutrition: 50 / 40 } },
-    wash: { label: 'Lavarsi', effects: { hygiene: 40 / 12 } },
-    social: { label: 'Socializzare', effects: { social: 35 / 90, fun: 10 / 90, energy: -1.0 / 60 } },
-    fun: { label: 'Svago', effects: { fun: 25 / 60 } },
-    idle: { label: 'Idle', effects: { energy: 0.2 } },
-}
-
-for (const [key, act] of Object.entries(basicActivities)) {
-    activitiesByKey[key] = act
-    activitiesByLabel[act.label] = act
-}
+registerVariants(EatActivity)
+registerVariants(WashActivity)
+registerVariants(SocialActivity)
+registerVariants(FunActivity)
+registerVariants(IdleActivity)
 
 export const ActivityRegistry = {
     /**
