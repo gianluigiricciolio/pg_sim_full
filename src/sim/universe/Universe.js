@@ -102,8 +102,12 @@ export function createUniverse() {
 
         // Fine attività
         if (state.activity.until && state.time >= state.activity.until) {
-            log(`Fine ${state.activity.name}`)
+            const finished = state.activity.name
+            log(`Fine ${finished}`)
             state.activity = { name: 'Idle', until: null }
+            if (finished === 'Mangiare') {
+                state.meta.lastMealTime = new Date(state.time)
+            }
         }
 
         const h = state.time.getHours()
@@ -134,14 +138,17 @@ export function createUniverse() {
             within(h, cfg.meals.lunch) ||
             within(h, cfg.meals.dinner)) {
 
-            const need = 100 - state.needs.nutrition
+            const lastMeal = state.meta.lastMealTime
+            if (!lastMeal || (state.time - lastMeal) >= 3 * 60 * 60 * 1000) {
+                const need = 100 - state.needs.nutrition
 
-            if (need > 30) {
-                return doEat(40) //pasto completo
-            } else if (need > 15) {
-                return doEat(25) //pasto normale
-            } else if (need > 0) {
-                return doEat(10) //spuntino
+                if (need > 30) {
+                    return doEat(40) //pasto completo
+                } else if (need > 15) {
+                    return doEat(25) //pasto normale
+                } else if (need > 0) {
+                    return doEat(10) //spuntino
+                }
             }
 
         }

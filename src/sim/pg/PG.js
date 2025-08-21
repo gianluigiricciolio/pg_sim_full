@@ -7,7 +7,7 @@ export class PG {
         this.state = reactive({
             needs: { energy: 95, nutrition: 85, hygiene: 80, social: 75, fun: 80 },
             activity: { name: 'Idle', until: null },
-            meta: { lastMeal: null, lastSleep: null, lastWash: null },
+            meta: { lastMealTime: null, lastSleep: null, lastWash: null },
         })
         this.time = startTime
     }
@@ -28,5 +28,9 @@ export class PG {
         for (const k of Object.keys(this.state.needs)) {
             this.state.needs[k] = Math.max(0, Math.min(100, this.state.needs[k]))
         }
+    }
+
+    recordMeal() {
+        this.state.meta.lastMealTime = this.time
     }
 }
