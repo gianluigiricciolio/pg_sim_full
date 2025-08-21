@@ -8,7 +8,12 @@ export class PG {
         this.state = reactive({
             needs: { energy: 95, nutrition: 85, hygiene: 80, social: 75, fun: 80 },
             activity: { name: 'Idle', until: null },
-            meta: { lastMealTime: null, lastSleepTime: null, lastShowerTime: null },
+            meta: {
+                lastMealTime: null,
+                lastSleepTime: null,
+                lastShowerTime: null,
+                meals: { breakfast: false, lunch: false, dinner: false },
+            },
         })
     }
 
@@ -71,4 +76,15 @@ export class PG {
         else this.clampNeeds()
         return new Date(currentTime.getTime() + 60000)
     }
+
+    recordMeal(time, type) {
+        this.state.meta.lastMealTime = new Date(time)
+        if (type && this.state.meta.meals[type] !== undefined) {
+            this.state.meta.meals[type] = !this.state.meta.meals[type]
+        }
+    }
+}
+
+export function createPG(cfg, log) {
+    return new PG('PG', cfg, log)
 }
