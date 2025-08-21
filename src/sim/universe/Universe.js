@@ -127,9 +127,9 @@ export function createUniverse() {
 
         const rules = [
             handleSleep,
+            handleMeals,
             handleWork,
             handleEmergencies,
-            handleMeals,
             handleNap,
             handleSocial,
             handleFun,
