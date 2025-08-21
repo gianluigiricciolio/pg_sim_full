@@ -1,4 +1,4 @@
-// src/sim/universe/universe.js
+// src/sim/universe/Universe.js
 import { reactive } from 'vue'
 import { defaultConfig } from '../config/defaultConfig'
 import { PG } from '../pg/PG'

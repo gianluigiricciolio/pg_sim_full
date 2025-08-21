@@ -121,7 +121,7 @@
 
 <script>
 import { ref, reactive, computed, onMounted, watch } from 'vue'
-import { createUniverse } from '../sim/universe/universe'
+import { createUniverse } from '../sim/universe/Universe'
 import DayEv from './DayEv.vue'
 
 export default {
