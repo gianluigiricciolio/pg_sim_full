@@ -1,8 +1,81 @@
 // src/sim/universe/Universe.js
 import { reactive } from 'vue'
 import { defaultConfig } from '../config/defaultConfig'
-import { PG } from '../pg/PG'
 import { handleSleep, handleWork, handleEmergencies, handleMeals, handleNap, handleSocial, handleFun, handleHygiene, handleIdle } from './rules'
+
+function createPG(cfg, log) {
+    const state = reactive({
+        needs: { energy: 95, nutrition: 85, hygiene: 80, social: 75, fun: 80 },
+        activity: { name: 'Idle', until: null },
+        meta: { lastMealTime: null, lastSleepTime: null, lastShowerTime: null },
+    })
+
+    function schedule(currentTime, name, minutes) {
+        const until = new Date(currentTime.getTime() + minutes * 60000)
+        state.activity = { name, until }
+        if (log) log(`Inizio ${name} (${minutes}m)`)
+        return until
+    }
+
+    function decayMinute() {
+        const d = cfg.decay
+        state.needs.energy -= d.energy.base / 60
+        state.needs.nutrition -= d.nutrition / 60
+        state.needs.hygiene -= d.hygiene / 60
+        state.needs.social -= d.social / 60
+        state.needs.fun -= d.fun / 60
+        clampNeeds()
+    }
+
+    function clampNeeds() {
+        for (const k of Object.keys(state.needs)) {
+            state.needs[k] = Math.max(0, Math.min(100, state.needs[k]))
+        }
+    }
+
+    function applyActivityMinute(currentTime) {
+        const a = state.activity.name
+        switch (a) {
+            case 'Dormire':
+                state.needs.energy = Math.min(100, state.needs.energy + (12.5 / 60))
+                state.needs.nutrition -= (1.0 / 60)
+                break
+            case 'Power-nap':
+                state.needs.energy = Math.min(100, state.needs.energy + 0.5)
+                break
+            case 'Mangiare':
+                state.needs.nutrition = Math.min(100, state.needs.nutrition + (50 / 40))
+                break
+            case 'Lavarsi':
+                state.needs.hygiene = Math.min(100, state.needs.hygiene + (40 / 12))
+                break
+            case 'Socializzare':
+                state.needs.social = Math.min(100, state.needs.social + (35 / 90))
+                state.needs.fun = Math.min(100, state.needs.fun + (10 / 90))
+                state.needs.energy -= (1.0 / 60)
+                break
+            case 'Svago':
+                state.needs.fun = Math.min(100, state.needs.fun + (25 / 60))
+                break
+            case 'Lavorare':
+                state.needs.energy -= (4.0 / 60)
+                state.needs.nutrition -= (2.0 / 60)
+                break
+            case 'Idle':
+                state.needs.energy = Math.min(100, state.needs.energy + 0.2)
+                break
+        }
+        if (a !== 'Dormire') decayMinute()
+        else clampNeeds()
+        return new Date(currentTime.getTime() + 60000)
+    }
+
+    function recordMeal(time) {
+        state.meta.lastMealTime = new Date(time)
+    }
+
+    return { state, schedule, applyActivityMinute, recordMeal }
+}
 
 export function createUniverse() {
     const cfg = reactive(defaultConfig())
@@ -22,12 +95,12 @@ export function createUniverse() {
         if (logs.length > 300) logs.shift()
     }
 
-    state.pg = new PG('PG', cfg, log)
+    state.pg = createPG(cfg, log)
 
     function reinit() {
 
         state.time = new Date(2025, 0, 1, cfg.time.startHour, 0, 0, 0)
-        state.pg = new PG('PG', cfg, log)
+        state.pg = createPG(cfg, log)
         state.napCount = 0
         state.workingToday = true
         logs.length = 0
@@ -78,6 +151,9 @@ export function createUniverse() {
         }
 
         if (state.pg.state.activity.until && state.time >= state.pg.state.activity.until) {
+            if (state.pg.state.activity.name === 'Mangiare') {
+                state.pg.recordMeal(state.time)
+            }
             log(`Fine ${state.pg.state.activity.name}`)
             state.pg.state.activity = { name: 'Idle', until: null }
         }
