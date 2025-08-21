@@ -3,15 +3,6 @@ import { reactive } from 'vue'
 import { defaultConfig } from '../config/defaultConfig'
 import { createPG } from '../pg/PG.js'
 import { handleSleep, handleWork, handleEmergencies, handleMeals, handleNap, handleSocial, handleFun, handleHygiene, handleIdle } from './rules'
-
-function formatDuration(ms) {
-    const totalMinutes = Math.round(ms / 60000)
-    const hours = Math.floor(totalMinutes / 60)
-    const minutes = totalMinutes % 60
-    if (hours > 0 && minutes > 0) return `${hours}h ${minutes}m`
-    if (hours > 0) return `${hours}h`
-    return `${minutes}m`
-}
 export function createUniverse() {
     const cfg = reactive(defaultConfig())
     const state = reactive({
@@ -93,15 +84,9 @@ export function createUniverse() {
             return
         }
 
-        if (state.pg.state.activity.until && state.time >= state.pg.state.activity.until) {
-            if (state.pg.state.activity.name === 'Mangiare') {
-                const m = mealTypeAt(state.time)
-                state.pg.recordMeal(state.time, m)
-            }
-            const activity = state.pg.state.activity
-            const dur = state.time - activity.start
-            log(`Finito ${activity.name} (durata ${formatDuration(dur)})`)
-            state.pg.state.activity = { name: 'Idle', until: null, start: null }
+        if (state.pg.state.activity.until && state.time >= state.pg.state.activity.until && state.pg.state.activity.name === 'Mangiare') {
+            const m = mealTypeAt(state.time)
+            state.pg.recordMeal(state.time, m)
         }
 
         if (state.time.getHours() === cfg.time.startHour && state.time.getMinutes() === 0) {

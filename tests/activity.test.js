@@ -22,6 +22,24 @@ describe('activity notifications', () => {
     expect(logs.filter(l => l.includes('Finito Test')).length).toBe(2)
   })
 
+  it('logs once for continuous repeated work activity', () => {
+    const { state, logs, step } = createUniverse()
+    state.time = new Date(2025, 0, 1, 9, 0, 0, 0)
+    state.pg.schedule(state.time, 'Lavorare', 30)
+
+    for (let i = 0; i < 5; i++) {
+      for (let j = 0; j < 30; j++) step()
+      state.pg.schedule(state.time, 'Lavorare', 30)
+    }
+    for (let j = 0; j < 30; j++) step()
+    state.pg.schedule(state.time, 'Svago', 30)
+
+    const startLogs = logs.filter(l => l.includes('Iniziato Lavorare'))
+    const endLogs = logs.filter(l => l.includes('Finito Lavorare'))
+    expect(startLogs.length).toBe(1)
+    expect(endLogs.length).toBe(1)
+  })
+
   it('calculates and formats duration correctly', () => {
     const { state, logs, step } = createUniverse()
     state.pg.schedule(state.time, 'Test', 65)
