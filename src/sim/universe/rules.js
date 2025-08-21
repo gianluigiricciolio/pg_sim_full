@@ -29,12 +29,15 @@ export function handleEmergencies({ pg, doNap, doEat, doWash }) {
 
 export function handleMeals({ state, pg, cfg, doEat, within }) {
     const h = state.time.getHours()
-    if (within(h, cfg.meals.breakfast) || within(h, cfg.meals.lunch) || within(h, cfg.meals.dinner)) {
-        const need = 100 - pg.state.needs.nutrition
-        if (need > 30) { doEat(40); return true }
-        if (need > 15) { doEat(25); return true }
-        if (need > 0) { doEat(10); return true }
-    }
+    let mealType = null
+    if (within(h, cfg.meals.breakfast)) mealType = 'breakfast'
+    else if (within(h, cfg.meals.lunch)) mealType = 'lunch'
+    else if (within(h, cfg.meals.dinner)) mealType = 'dinner'
+    if (!mealType || pg.state.meta.meals[mealType]) return false
+    const need = 100 - pg.state.needs.nutrition
+    if (need > 30) { doEat(40); return true }
+    if (need > 15) { doEat(25); return true }
+    if (need > 0) { doEat(10); return true }
     return false
 }
 

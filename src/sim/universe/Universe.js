@@ -7,7 +7,12 @@ function createPG(cfg, log) {
     const state = reactive({
         needs: { energy: 95, nutrition: 85, hygiene: 80, social: 75, fun: 80 },
         activity: { name: 'Idle', until: null },
-        meta: { lastMealTime: null, lastSleepTime: null, lastShowerTime: null },
+        meta: {
+            lastMealTime: null,
+            lastSleepTime: null,
+            lastShowerTime: null,
+            meals: { breakfast: false, lunch: false, dinner: false },
+        },
     })
 
     function schedule(currentTime, name, minutes) {
@@ -70,8 +75,11 @@ function createPG(cfg, log) {
         return new Date(currentTime.getTime() + 60000)
     }
 
-    function recordMeal(time) {
+    function recordMeal(time, type) {
         state.meta.lastMealTime = new Date(time)
+        if (type && state.meta.meals[type] !== undefined) {
+            state.meta.meals[type] = true
+        }
     }
 
     return { state, schedule, applyActivityMinute, recordMeal }
@@ -138,6 +146,14 @@ export function createUniverse() {
         return h >= a && h < b
     }
 
+    function mealTypeAt(time) {
+        const h = time.getHours()
+        if (within(h, cfg.meals.breakfast)) return 'breakfast'
+        if (within(h, cfg.meals.lunch)) return 'lunch'
+        if (within(h, cfg.meals.dinner)) return 'dinner'
+        return null
+    }
+
     function isWeekend() {
         const day = state.time.getDay() // 0 = Sunday
         return day === 0 || day === 6
@@ -152,10 +168,16 @@ export function createUniverse() {
 
         if (state.pg.state.activity.until && state.time >= state.pg.state.activity.until) {
             if (state.pg.state.activity.name === 'Mangiare') {
-                state.pg.recordMeal(state.time)
+                const m = mealTypeAt(state.time)
+                state.pg.recordMeal(state.time, m)
             }
             log(`Fine ${state.pg.state.activity.name}`)
             state.pg.state.activity = { name: 'Idle', until: null }
+        }
+
+        if (state.time.getHours() === cfg.time.startHour && state.time.getMinutes() === 0) {
+            const meals = state.pg.state.meta.meals
+            meals.breakfast = meals.lunch = meals.dinner = false
         }
 
         const ctx = {
