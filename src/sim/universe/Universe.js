@@ -52,6 +52,10 @@ export function createUniverse() {
     }
 
     // Controls
+
+    //soundtrack
+    const bg = document.getElementById('loop'); //get the audio from html
+
     /**
      * Start the simulation loop.
      * @returns {void}
@@ -59,6 +63,7 @@ export function createUniverse() {
     function play() {
         state.running = true
         startInterval()
+        bg.play()
     }
     /**
      * Pause the simulation loop.
@@ -67,6 +72,7 @@ export function createUniverse() {
     function pause() {
         state.running = false
         if (intervalId) clearInterval(intervalId)
+        bg.pause()
     }
     /**
      * Advance the simulation by a single minute.
