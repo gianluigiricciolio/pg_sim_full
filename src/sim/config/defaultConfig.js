@@ -5,6 +5,7 @@
  */
 export function defaultConfig() {
     return {
+        name: 'Pino',
         seed: 12345,
         time: { startHour: 7 },
         work: { on: true, start: 9, end: 17 },

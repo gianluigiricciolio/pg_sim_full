@@ -2,17 +2,14 @@
   <div>
     <header>
       <div>
-        <h1>Little World — Simulatore</h1>
+        <h1>
+          <img src="../../favicon.ico" style="max-height: 64px; vertical-align: center;">
+          Little World — Simulatore
+        </h1>
         <div class="small">Giornata v0 (AI bisogni) + DNA/EV (hard cap 230) • Speed e Back Office</div>
       </div>
-      <UniverseControls
-        :speed="speed"
-        :clock-label="clockLabel"
-        :play="play"
-        :pause="pause"
-        :step="step"
-        :set-speed="updateSpeed"
-      />
+      <UniverseControls :speed="speed" :clock-label="clockLabel" :play="play" :pause="pause" :step="step"
+        :set-speed="updateSpeed" />
     </header>
 
     <div class="tabs">
@@ -21,13 +18,7 @@
     </div>
 
     <div v-if="tab === 'day'" class="wrap">
-      <PgStatus
-        :state="state"
-        :cfg="cfg"
-        :logs="logs"
-        :labels-need="labelsNeed"
-        :need-keys="needKeys"
-      />
+      <PgStatus :state="state" :cfg="cfg" :logs="logs" :labels-need="labelsNeed" :need-keys="needKeys" />
       <ConfigPanel :cfg="cfg" :reinit-day="reinitDay" />
     </div>
 
