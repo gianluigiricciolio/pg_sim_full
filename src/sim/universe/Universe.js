@@ -55,15 +55,23 @@ export function createUniverse() {
 
     //soundtrack
     const bg = document.getElementById('loop'); //get the audio from html
+    const FADE_MS = 5000; // durata del fade (0,5 s)
 
+    function fadeAudio(el, targetVol, duration, onEnd) {
+        const startVol = el.volume;
+        const delta = targetVol - startVol;
+        const t0 = performance.now();
+    }
     /**
      * Start the simulation loop.
      * @returns {void}
      */
     function play() {
         state.running = true
-        startInterval()
         bg.play()
+        fadeAudio(bg, 1, FADE_MS);
+        startInterval()
+
     }
     /**
      * Pause the simulation loop.
@@ -71,8 +79,10 @@ export function createUniverse() {
      */
     function pause() {
         state.running = false
-        if (intervalId) clearInterval(intervalId)
         bg.pause()
+        fadeAudio(bg, 0, FADE_MS, () => bg.pause());
+        if (intervalId) clearInterval(intervalId)
+
     }
     /**
      * Advance the simulation by a single minute.
