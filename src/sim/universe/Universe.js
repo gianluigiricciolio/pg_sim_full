@@ -53,14 +53,27 @@ export function createUniverse() {
 
     // Controls
 
-    //soundtrack
-    const bg = document.getElementById('loop'); //get the audio from html
-    const FADE_MS = 5000; // durata del fade (0,5 s)
+    // soundtrack
+    const bg = typeof document !== 'undefined' ? document.getElementById('loop') : null
+    const FADE_MS = 500 // durata del fade (0.5 s)
+    const SONG_FACTOR = 1
 
     function fadeAudio(el, targetVol, duration, onEnd) {
-        const startVol = el.volume;
-        const delta = targetVol - startVol;
-        const t0 = performance.now();
+        const startVol = el.volume
+        const delta = targetVol - startVol
+        const t0 = performance.now()
+
+        function tick(t) {
+            const progress = Math.min((t - t0) / duration, 1)
+            el.volume = startVol + delta * progress
+            if (progress < 1) {
+                requestAnimationFrame(tick)
+            } else if (onEnd) {
+                onEnd()
+            }
+        }
+
+        requestAnimationFrame(tick)
     }
     /**
      * Start the simulation loop.
@@ -68,8 +81,11 @@ export function createUniverse() {
      */
     function play() {
         state.running = true
-        bg.play()
-        fadeAudio(bg, 1, FADE_MS);
+        if (bg) {
+            bg.volume = 0
+            bg.play()
+            fadeAudio(bg, 1, FADE_MS)
+        }
         startInterval()
 
     }
@@ -78,9 +94,8 @@ export function createUniverse() {
      * @returns {void}
      */
     function pause() {
+        if (bg) fadeAudio(bg, 0, FADE_MS, () => bg.pause())
         state.running = false
-        bg.pause()
-        fadeAudio(bg, 0, FADE_MS, () => bg.pause());
         if (intervalId) clearInterval(intervalId)
 
     }
@@ -99,6 +114,7 @@ export function createUniverse() {
      */
     function setSpeed(newSpeed) {
         state.speed = newSpeed
+        if (bg) bg.playbackRate = newSpeed * SONG_FACTOR
         if (state.running) startInterval()
     }
 

@@ -6,11 +6,6 @@
           <img src="../../favicon.ico" style="max-height: 64px; vertical-align: center;">
           Little World — Simulatore
         </h1>
-        <div>
-          <audio id="loop" loop>
-            <source src="/public/musica.mp3" type="audio/mpeg">
-          </audio>
-        </div>
         <div class="small">Giornata v0 (AI bisogni) + DNA/EV (hard cap 230) • Speed e Back Office</div>
       </div>
       <UniverseControls :speed="speed" :clock-label="clockLabel" :play="play" :pause="pause" :step="step"

@@ -160,8 +160,8 @@ export class PG {
         const needs = this.state.needs
         const crit = this.cfg.crit
         if (needs.energy < crit.energy) { doSleep('power', 30); return true }
-        if (needs.nutrition < crit.nutrition) { doEat(40); return true }
-        if (needs.hygiene < crit.hygiene) { doWash(30); return true }
+        if (needs.nutrition < crit.nutrition) { doEat(45); return true }
+        if (needs.hygiene < crit.hygiene) { doWash(12); return true }
         return false
     }
 }
