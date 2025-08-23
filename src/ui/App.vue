@@ -1,26 +1,22 @@
 <template>
   <div>
-    <header>
-      <div>
-        <h1>
-          <img src="../../favicon.ico" style="max-height: 64px; vertical-align: center;">
-          Little World — Simulatore
-        </h1>
-        <div>
-          <audio id="loop" loop>
-            <source src="/public/musica.mp3" type="audio/mpeg">
-          </audio>
-        </div>
-        <div class="small">Giornata v0 (AI bisogni) + DNA/EV (hard cap 230) • Speed e Back Office</div>
+    <header class="app-header">
+      <div class="branding">
+        <img src="/logo.svg" alt="Little World logo" class="logo" />
+        <h1 class="title">Little World — Simulatore</h1>
       </div>
-      <UniverseControls :speed="speed" :clock-label="clockLabel" :play="play" :pause="pause" :step="step"
-        :set-speed="updateSpeed" />
+      <UniverseControls :speed="speed" :clock-label="clockLabel" :play="play" :pause="pause" :step="step" :set-speed="updateSpeed" />
     </header>
 
-    <div class="tabs">
-      <div :class="['tab', tab === 'day' ? 'active' : '']" @click="tab = 'day'">Giornata v0 (AI bisogni)</div>
-      <div :class="['tab', tab === 'ev' ? 'active' : '']" @click="tab = 'ev'">DNA/EV</div>
-    </div>
+    <audio id="loop" loop>
+      <source src="/musica.mp3" type="audio/mpeg" />
+    </audio>
+    <div class="small">Giornata v0 (AI bisogni) + DNA/EV (hard cap 230) • Speed e Back Office</div>
+
+    <nav class="menu" role="tablist">
+      <button class="tab" role="tab" :aria-selected="tab === 'day'" @click="tab = 'day'">Giornata v0 (AI bisogni)</button>
+      <button class="tab" role="tab" :aria-selected="tab === 'ev'" @click="tab = 'ev'">DNA/EV</button>
+    </nav>
 
     <div v-if="tab === 'day'" class="wrap">
       <PgStatus :state="state" :cfg="cfg" :logs="logs" :labels-need="labelsNeed" :need-keys="needKeys" />
