@@ -2,6 +2,7 @@
 import { reactive } from 'vue'
 import { defaultConfig } from '../config/defaultConfig'
 import { createPG } from '../pg/PG.js'
+import audioManager from '../../audio/AudioManager.js'
 import { SleepActivity } from '../activities/SleepActivity.js'
 import { ActivityRegistry } from '../activities/ActivityRegistry.js'
 import { handleSleep, handleWork, handleEmergencies, handleMeals, handleNap, handleSocial, handleFun, handleHygiene, handleIdle } from './rules'
@@ -35,6 +36,7 @@ export function createUniverse() {
     }
 
     state.pg = createPG(cfg, log)
+    audioManager.load()
 
     /**
      * Reset the universe to its initial daily state.
@@ -53,9 +55,6 @@ export function createUniverse() {
 
     // Controls
 
-    //soundtrack
-    const bg = document.getElementById('loop'); //get the audio from html
-
     /**
      * Start the simulation loop.
      * @returns {void}
@@ -63,7 +62,7 @@ export function createUniverse() {
     function play() {
         state.running = true
         startInterval()
-        bg.play()
+        audioManager.play()
     }
     /**
      * Pause the simulation loop.
@@ -72,7 +71,7 @@ export function createUniverse() {
     function pause() {
         state.running = false
         if (intervalId) clearInterval(intervalId)
-        bg.pause()
+        audioManager.pause()
     }
     /**
      * Advance the simulation by a single minute.
