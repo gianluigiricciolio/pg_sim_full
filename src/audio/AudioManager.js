@@ -1,6 +1,6 @@
 export const AudioManager = {
   audio: null,
-  init(track = '/public/musica.mp3') {
+  init(track = '/music/loop.mp3') {
     if (!this.audio) {
       this.audio = new Audio(track)
       this.audio.loop = true

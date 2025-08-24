@@ -13,6 +13,7 @@ import { AudioManager } from '../../audio/AudioManager.js'
  * @sideeffect Initializes reactive state and timers.
  */
 export function createUniverse() {
+    AudioManager.setVolume(0.3) //set Volume to 30%
     const cfg = reactive(defaultConfig())
     const state = reactive({
         time: new Date(2025, 0, 1, cfg.time.startHour, 0, 0, 0),

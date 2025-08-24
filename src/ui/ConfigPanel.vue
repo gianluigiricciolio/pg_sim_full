@@ -1,6 +1,19 @@
 <template>
   <section class="panel">
     <h2>Back Office — Giornata</h2>
+
+    <fieldset>
+      <legend>Colonna Sonora</legend>
+      <label>Scegli l' audio
+        <select name="" id="music">
+          <option value="">Morning</option>
+          <option value="">Afternoon</option>
+          <option value="">Evening</option>
+        </select>
+      </label>
+
+    </fieldset>
+
     <fieldset>
       <legend>Tempo</legend>
       <div class="grid2">
