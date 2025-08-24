@@ -5,10 +5,10 @@
     <fieldset>
       <legend>Colonna Sonora</legend>
       <label>Scegli l' audio
-        <select name="" id="music">
-          <option value="">Morning</option>
-          <option value="">Afternoon</option>
-          <option value="">Evening</option>
+        <select :value="track" @change="e => setTrack(value)">
+          <option :value="'/music/loop.mp3'">Morning</option>
+          <option :value="'/music/musica.mp3'">Afternoon</option>
+          <option :value="'/music/evening.mp3'">Evening</option>
         </select>
       </label>
 

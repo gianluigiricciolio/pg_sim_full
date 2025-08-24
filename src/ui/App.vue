@@ -19,7 +19,7 @@
 
     <div v-if="tab === 'day'" class="wrap">
       <PgStatus :state="state" :cfg="cfg" :logs="logs" :labels-need="labelsNeed" :need-keys="needKeys" />
-      <ConfigPanel :cfg="cfg" :reinit-day="reinitDay" />
+      <ConfigPanel :track="track" :cfg="cfg" :reinit-day="reinitDay" />
     </div>
 
     <div v-else class="wrap">
