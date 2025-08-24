@@ -9,6 +9,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "soundtrack.js": "^0.5.5",
     "vue": "^3.4.21"
   },
   "devDependencies": {
