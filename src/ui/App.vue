@@ -3,7 +3,7 @@
     <header>
       <div>
         <h1>
-          <img src="../../favicon.ico" style="max-height: 64px; vertical-align: center;">
+          <img src="/favicon.ico" style="max-height: 64px; vertical-align: center;">
           Little World — Simulatore
         </h1>
         <div>

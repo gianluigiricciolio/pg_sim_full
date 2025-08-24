@@ -1,4 +1,4 @@
-import Soundtrack from 'soundtrack.js'
+import { soundtrack as Soundtrack } from 'soundtrack.js'
 
 /**
  * AudioManager centralizza la gestione dell'audio di background usando soundtrack.js.

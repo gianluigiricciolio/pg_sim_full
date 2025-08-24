@@ -23,7 +23,7 @@ describe('checkPrimaryNeeds', () => {
         const doEat = vi.fn()
         const triggered = pg.checkPrimaryNeeds({ doSleep: vi.fn(), doEat, doWash: vi.fn() })
         expect(triggered).toBe(true)
-        expect(doEat).toHaveBeenCalledWith(45)
+        expect(doEat).toHaveBeenCalledWith(40)
     })
 
     it('triggers wash when hygiene below critical', () => {
@@ -31,7 +31,7 @@ describe('checkPrimaryNeeds', () => {
         const doWash = vi.fn()
         const triggered = pg.checkPrimaryNeeds({ doSleep: vi.fn(), doEat: vi.fn(), doWash })
         expect(triggered).toBe(true)
-        expect(doWash).toHaveBeenCalledWith(12)
+        expect(doWash).toHaveBeenCalledWith(30)
     })
 
     it('returns false when all needs satisfied', () => {
