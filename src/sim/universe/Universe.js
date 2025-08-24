@@ -5,6 +5,7 @@ import { createPG } from '../pg/PG.js'
 import { SleepActivity } from '../activities/SleepActivity.js'
 import { ActivityRegistry } from '../activities/ActivityRegistry.js'
 import { handleSleep, handleWork, handleEmergencies, handleMeals, handleNap, handleSocial, handleFun, handleHygiene, handleIdle } from './rules'
+import { AudioManager } from '../../audio/AudioManager.js'
 
 /**
  * Create the simulation universe holding state and control helpers.
@@ -53,9 +54,6 @@ export function createUniverse() {
 
     // Controls
 
-    //soundtrack
-    const bg = document.getElementById('loop'); //get the audio from html
-
     /**
      * Start the simulation loop.
      * @returns {void}
@@ -63,7 +61,7 @@ export function createUniverse() {
     function play() {
         state.running = true
         startInterval()
-        bg.play()
+        AudioManager.play()
     }
     /**
      * Pause the simulation loop.
@@ -72,7 +70,7 @@ export function createUniverse() {
     function pause() {
         state.running = false
         if (intervalId) clearInterval(intervalId)
-        bg.pause()
+        AudioManager.pause()
     }
     /**
      * Advance the simulation by a single minute.
