@@ -20,6 +20,15 @@ export const AudioManager = {
       this.audio.load()
     }
   },
+  setPlayTrack(url) {
+    if (!this.audio) {
+      this.init(url)
+    } else {
+      this.audio.src = url
+      this.audio.load()
+      this.audio.play()
+    }
+  },
   setVolume(v) {
     if (this.audio) this.audio.volume = v
   },

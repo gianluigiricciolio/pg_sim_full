@@ -19,7 +19,7 @@
 
     <div v-if="tab === 'day'" class="wrap">
       <PgStatus :state="state" :cfg="cfg" :logs="logs" :labels-need="labelsNeed" :need-keys="needKeys" />
-      <ConfigPanel :track="track" :cfg="cfg" :reinit-day="reinitDay" />
+      <ConfigPanel :set-Track="setTrack" :track="track" :cfg="cfg" :reinit-day="reinitDay" />
     </div>
 
     <div v-else class="wrap">
@@ -35,6 +35,7 @@ import DayEv from './DayEv.vue'
 import UniverseControls from './UniverseControls.vue'
 import PgStatus from './PgStatus.vue'
 import ConfigPanel from './ConfigPanel.vue'
+import { AudioManager } from '../audio/AudioManager'
 
 export default {
   components: { DayEv, UniverseControls, PgStatus, ConfigPanel },
@@ -44,7 +45,7 @@ export default {
     const tab = ref('day')
     const labelsNeed = { energy: 'Energia', nutrition: 'Nutrizione', hygiene: 'Igiene', social: 'Socialità', fun: 'Divertimento' }
     const needKeys = ['energy', 'nutrition', 'hygiene', 'social', 'fun']
-
+    const setTrack = AudioManager.setPlayTrack.bind(AudioManager)
     const clockLabel = computed(() => state.time.toLocaleTimeString())
 
     watch(speed, (v) => state.speed = v)
@@ -62,7 +63,8 @@ export default {
       labelsNeed, needKeys, tab,
       play: () => play(), pause: () => pause(), step: () => step(),
       reinitDay,
-      updateSpeed
+      updateSpeed,
+      setTrack
     }
   }
 }

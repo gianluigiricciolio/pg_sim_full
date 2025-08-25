@@ -5,7 +5,7 @@
     <fieldset>
       <legend>Colonna Sonora</legend>
       <label>Scegli l' audio
-        <select :value="track" @change="e => setTrack(value)">
+        <select :value="track" @change="e => setTrack(e.target.value)">
           <option :value="'/music/loop.mp3'">Morning</option>
           <option :value="'/music/musica.mp3'">Afternoon</option>
           <option :value="'/music/evening.mp3'">Evening</option>
@@ -67,7 +67,8 @@ export default {
   name: 'ConfigPanel',
   props: {
     cfg: Object,
-    reinitDay: Function
+    reinitDay: Function,
+    setTrack: Function
   },
   setup(props) {
     const { cfg, reinitDay } = props

@@ -12,7 +12,7 @@ export function handleWork({ state, pg, cfg, doSleep, doEat, doWash, doWork, isW
     const workOn = cfg.work.on && !isWeekend()
     if (workOn && h >= cfg.work.start && h < cfg.work.end) {
         if (pg.checkPrimaryNeeds({ doSleep, doEat, doWash })) return true
-        doWork(30)
+        doWork(5)
         return true
     }
     return false
